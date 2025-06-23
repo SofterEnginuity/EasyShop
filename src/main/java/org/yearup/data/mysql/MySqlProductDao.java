@@ -10,6 +10,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+//Bugs found:
+//Show all categories- likely to be done in categories
+//minprice- works, incorrectly
+//maxPrice doesnt work at all
+//some color filters work
+
 @Component
 public class MySqlProductDao extends MySqlDaoBase implements ProductDao
 {
