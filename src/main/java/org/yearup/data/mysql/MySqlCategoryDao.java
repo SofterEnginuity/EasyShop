@@ -1,5 +1,6 @@
 package org.yearup.data.mysql;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.yearup.data.CategoryDao;
 import org.yearup.models.Category;
@@ -64,6 +65,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
 
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Category create(Category category) {
         String sql = "INSERT INTO categories (name, description) VALUES (?, ?)";
 

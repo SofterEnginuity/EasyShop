@@ -35,21 +35,18 @@ public class CategoriesController {
 
     @GetMapping("{id}")
     @PreAuthorize("permitAll()")
-    public List<Category> getById(@PathVariable int id) {
-        {
-            try
-            {
-                var category = categoryDao.getById(id);
-
-                if(category == null)
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-                return category;
+    public Category getById(@PathVariable int id) {
+        try {
+//            Category category = categoryDao.getById(id);
+            List<Category> categories = categoryDao.getById(id);
+            if (categories.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
-            catch(Exception ex)
-            {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
-            }
+            Category category = categories.get(0);
+            return category;
+
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
         }
     }
 
@@ -57,6 +54,7 @@ public class CategoriesController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.CREATED)
     public Category addCategory(@RequestBody Category category) {
 
        try{
@@ -70,6 +68,7 @@ public class CategoriesController {
 
     @PutMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
+
     public Category updateCategory(@PathVariable int id, @RequestBody Category category) {
         try {
             categoryDao.update(id, category);

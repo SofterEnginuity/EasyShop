@@ -11,8 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //Bugs found:
-//Show all categories- likely to be done in categories
-//minprice- works, incorrectly
+//minprice- works, but the code is for maxprice
 //maxPrice doesnt work at all
 //some color filters work
 
