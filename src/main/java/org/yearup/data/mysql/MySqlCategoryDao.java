@@ -2,7 +2,6 @@ package org.yearup.data.mysql;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.yearup.data.CategoryDao;
 import org.yearup.models.Category;
 import org.yearup.models.Product;
@@ -16,6 +15,7 @@ import java.util.List;
 public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
     public MySqlCategoryDao(DataSource dataSource) {
         super(dataSource);
+        Category category = null;
     }
 
     @Override
@@ -43,30 +43,31 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
 
 
     @Override
-    public List<Category> getById(int categoryId) {
-        List<Category> categories = new ArrayList<>();
+    public Category getById(int categoryId) {
+        String sql = "SELECT * FROM categories WHERE category_id = ?";
+        try (Connection connection = getConnection()){
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, categoryId);
 
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement =
-                     connection.prepareStatement("SELECT * FROM categories WHERE category_id = ?")) {
+            ResultSet row = statement.executeQuery();
 
-            preparedStatement.setInt(1, categoryId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                Category category = new Category();
-                category.setCategoryId(resultSet.getInt("category_id"));
-                category.setName(resultSet.getString("name"));
-                category.setDescription(resultSet.getString("description"));
-                categories.add(category);
+            if (row.next())
+            {
+                return mapRow(row);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return categories;
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
-    public List<Product> getProductById(int productId) {
+
+
+    public List<Product> getProductsById(int productId) {
         List<Product> products = new ArrayList<>();
+
 
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement =
@@ -129,16 +130,14 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
     @Override
     public void update(int categoryId, Category category)
     {
-        String sql = "UPDATE categories SET name = ? "
-        + " , description = ? " + " , WHERE category_id = ?;";
+        String sql = "UPDATE categories SET name = ?, description = ? WHERE category_id = ?";
 
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement =
-                     connection.prepareStatement(sql)) {
+             PreparedStatement preparedStatement =  connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, category.getName());
             preparedStatement.setString(2, category.getDescription());
-            preparedStatement.setInt(3, category.getCategoryId());
+            preparedStatement.setInt(3, categoryId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

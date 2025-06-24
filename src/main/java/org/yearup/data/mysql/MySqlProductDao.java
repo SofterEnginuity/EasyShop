@@ -25,47 +25,41 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
     }
 
     @Override
-    public List<Product> search(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color)
-    {
+    public List<Product> search(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color) {
         List<Product> products = new ArrayList<>();
 
+        categoryId = (categoryId == null) ? -1 : categoryId;
+        minPrice = (minPrice == null) ? BigDecimal.ZERO : minPrice;
+        maxPrice = (maxPrice == null) ? new BigDecimal("9999999") : maxPrice;
+        color = (color == null || color.isEmpty()) ? "%" : "%" + color + "%";
+
         String sql = "SELECT * FROM products " +
-                "WHERE (category_id = ?) " +
-                "   AND (price <= ? OR ? price >= ?) " +
-                "   AND (color LIKE ?) ";
+                "WHERE category_id = ? " +
+                "AND price BETWEEN ? AND ? " +
+                "AND color LIKE ?";
 
-        categoryId = categoryId == null ? -1 : categoryId;
-        minPrice = minPrice == null ? new BigDecimal("-1") : minPrice;
-        maxPrice = maxPrice == null ? new BigDecimal("-1") : maxPrice;
-        color = color == null ? "" : color;
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-        try (Connection connection = getConnection())
-        {
-            PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, categoryId);
-            statement.setInt(2, categoryId);
-            statement.setBigDecimal(3, minPrice);
-            statement.setBigDecimal(4, minPrice);
-            statement.setBigDecimal(4, maxPrice);
-            statement.setBigDecimal(4, maxPrice);
-            statement.setString(7, color);
-            statement.setString(8, color);
+            statement.setBigDecimal(2, minPrice);
+            statement.setBigDecimal(3, maxPrice);
+            statement.setString(4, color);
 
             ResultSet row = statement.executeQuery();
 
-            while (row.next())
-            {
+            while (row.next()) {
                 Product product = mapRow(row);
                 products.add(product);
             }
-        }
-        catch (SQLException e)
-        {
+
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
         return products;
     }
+
 
     @Override
     public List<Product> listByCategoryId(int categoryId)

@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.CategoryDao;
 import org.yearup.data.ProductDao;
 import org.yearup.models.Category;
+import org.yearup.models.Product;
 
 
 import java.util.List;
@@ -35,20 +36,23 @@ public class CategoriesController {
     @GetMapping("/{id}")
     @PreAuthorize("permitAll()")
     public Category getById(@PathVariable int id) {
-        try {
-//            Category category = categoryDao.getById(id);
-            List<Category> categories = categoryDao.getById(id);
-            if (categories.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-            Category category = categories.get(0);
-            return category;
-
-        } catch (Exception ex) {
+        Category category = null;
+        try
+        {
+            category = categoryDao.getById(id);
+        }
+        catch(Exception ex)
+        {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
         }
-    }
 
+        if(category == null)
+        {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        return category;
+    }
 
 
     @PostMapping
@@ -66,15 +70,14 @@ public class CategoriesController {
 
 
     @PutMapping("{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
 
-    public Category updateCategory(@PathVariable int id, @RequestBody Category category) {
+    public void updateCategory(@PathVariable int id, @RequestBody Category category) {
         try {
             categoryDao.update(id, category);
         } catch (Exception ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops.");
         }
-        return category;
     }
 
 
@@ -85,12 +88,9 @@ public class CategoriesController {
         try
         {
             var category = categoryDao.getById(id);
-
             if(category== null)
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
             categoryDao.delete(id);
-            System.out.println("Trying to delete from CatController");
         }
         catch(Exception ex)
         {
@@ -98,10 +98,4 @@ public class CategoriesController {
         }
     }
 }
-// try {
-//            categoryDao.delete(id);
-//        } catch (Exception ex) {
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
-//        }
-//
-//    }}
+
