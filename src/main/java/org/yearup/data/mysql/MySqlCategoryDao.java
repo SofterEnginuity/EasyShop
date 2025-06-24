@@ -2,8 +2,10 @@ package org.yearup.data.mysql;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.yearup.data.CategoryDao;
 import org.yearup.models.Category;
+import org.yearup.models.Product;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -63,6 +65,33 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
         return categories;
     }
 
+    public List<Product> getProductById(int productId) {
+        List<Product> products = new ArrayList<>();
+
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement =
+                     connection.prepareStatement("SELECT * FROM products WHERE product_id = ?")) {
+
+            preparedStatement.setInt(1, productId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                Product product = new Product();
+                product.setProductId(resultSet.getInt("product_id"));
+                product.setName(resultSet.getString("name"));
+                product.setDescription(resultSet.getString("description"));
+                product.setPrice(resultSet.getBigDecimal("price")); // adjust depending on type
+                product.setCategoryId(resultSet.getInt("category_id")); // if applicable
+                products.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return products;
+    }
+
+
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -100,7 +129,8 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
     @Override
     public void update(int categoryId, Category category)
     {
-        String sql = "UPDATE categories Set name = ?, description= ? WHERE category_id = ?";
+        String sql = "UPDATE categories SET name = ? "
+        + " , description = ? " + " , WHERE category_id = ?;";
 
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement =
@@ -118,14 +148,18 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
     @Override
     public void delete(int categoryId)
     {
-        String sql = "DELETE * FROM categories WHERE category_id LIKE ?";
+        String sql = "DELETE FROM categories " +
+                " WHERE category_id = ?;";
         try (Connection connection = getConnection();
              PreparedStatement preparedStatement =
                      connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, categoryId);
+
             preparedStatement.executeUpdate();
+            System.out.println("Deleting category with ID: " + categoryId);
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

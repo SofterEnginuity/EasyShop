@@ -18,12 +18,11 @@ import java.util.List;
 public class CategoriesController {
 
     private CategoryDao categoryDao;
-    private ProductDao productDao;
 
     @Autowired
-    public CategoriesController(CategoryDao categoryDao, ProductDao productDao) {
+    public CategoriesController(CategoryDao categoryDao) {
         this.categoryDao = categoryDao;
-        this.productDao = productDao;
+
     }
 
 
@@ -33,7 +32,7 @@ public class CategoriesController {
         return categoryDao.getAllCategories();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @PreAuthorize("permitAll()")
     public Category getById(@PathVariable int id) {
         try {
@@ -73,23 +72,25 @@ public class CategoriesController {
         try {
             categoryDao.update(id, category);
         } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops.");
         }
         return category;
     }
 
 
-    @DeleteMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable int id) {
         try
         {
-            var product = productDao.getById(id);
+            var category = categoryDao.getById(id);
 
-            if(product == null)
+            if(category== null)
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
-            productDao.delete(id);
+            categoryDao.delete(id);
+            System.out.println("Trying to delete from CatController");
         }
         catch(Exception ex)
         {
@@ -97,3 +98,10 @@ public class CategoriesController {
         }
     }
 }
+// try {
+//            categoryDao.delete(id);
+//        } catch (Exception ex) {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+//        }
+//
+//    }}
