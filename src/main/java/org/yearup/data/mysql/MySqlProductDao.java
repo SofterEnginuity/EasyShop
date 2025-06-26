@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 //Bugs found:
-//Show all categories- likely to be done in categories
 //minprice- works, but the code is for maxprice
-//maxPrice doesnt work at all
-//some color filters work
+//maxPrice doesnt work at all, not included in resultset
+
+
 
 @Component
 public class MySqlProductDao extends MySqlDaoBase implements ProductDao
@@ -24,27 +24,38 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
         super(dataSource);
     }
 
+
+    @Override
+    public List<Product> getAllProducts() {
+        return List.of();
+    }
+
     @Override
     public List<Product> search(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color) {
         List<Product> products = new ArrayList<>();
 
+
         categoryId = (categoryId == null) ? -1 : categoryId;
-        minPrice = (minPrice == null) ? BigDecimal.ZERO : minPrice;
-        maxPrice = (maxPrice == null) ? new BigDecimal("9999999") : maxPrice;
-        color = (color == null || color.isEmpty()) ? "%" : "%" + color + "%";
+        minPrice = (minPrice == null) ? new BigDecimal("-1") : minPrice;
+        maxPrice = (maxPrice == null) ? new BigDecimal("-1") : maxPrice;
+        color = color == null ? "" : color;
 
         String sql = "SELECT * FROM products " +
-                "WHERE category_id = ? " +
-                "AND price BETWEEN ? AND ? " +
-                "AND color LIKE ?";
-
+                "WHERE (? = -1 OR category_id = ?) " +
+                "AND (? = -1 OR price >= ?) " +
+                "AND (? = -1 OR price <= ?) " +
+                "AND (? = '' OR color LIKE ?)";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, categoryId);
-            statement.setBigDecimal(2, minPrice);
-            statement.setBigDecimal(3, maxPrice);
-            statement.setString(4, color);
+            statement.setInt(2, categoryId);
+            statement.setBigDecimal(3, minPrice);
+            statement.setBigDecimal(4, minPrice);
+            statement.setBigDecimal(5, maxPrice);
+            statement.setBigDecimal(6, maxPrice);
+            statement.setString(7, color);
+            statement.setString(8, color);
 
             ResultSet row = statement.executeQuery();
 
