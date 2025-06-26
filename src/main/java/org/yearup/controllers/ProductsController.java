@@ -53,6 +53,7 @@ public class ProductsController
 
     @GetMapping("/{id}")
     @PreAuthorize("permitAll()")
+
     public Product getById(@PathVariable int id )
     {
         Product product = null;
@@ -75,6 +76,7 @@ public class ProductsController
 
     @PostMapping()
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @ResponseStatus(HttpStatus.CREATED)
     public Product addProduct(@RequestBody Product product)
     {
         try
@@ -103,16 +105,17 @@ public class ProductsController
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@PathVariable int id)
     {
         try
         {
             var product = productDao.getById(id);
+            productDao.delete(id);
 
             if(product == null)
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
-            productDao.delete(id);
         }
         catch(Exception ex)
         {
