@@ -17,27 +17,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-//should return shopping cart instead of whatever
-//remove by id
-
-
 @Component
 public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDao {
 
     //private ShoppingCart shoppingCart;
- //   private ShoppingCartItem shoppingCartItem;
+    //   private ShoppingCartItem shoppingCartItem;
     private ProductDao productDao;
 
-   //  private Product product;
-   // private User user;
-@Autowired
+    //  private Product product;
+    // private User user;
+    @Autowired
 //private MySqlProductDao mySqlProductDao;
-    public MySqlShoppingCartDao(DataSource dataSource)
-    {
+    public MySqlShoppingCartDao(DataSource dataSource) {
         super(dataSource);
     }
-
-
 
 
     @Override
@@ -49,75 +42,129 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
         String sql = "SELECT * FROM shopping_cart WHERE user_id = ?";
 
 
-        try (Connection connection = getConnection()){
+        try (Connection connection = getConnection()) {
 
             PreparedStatement pstmt = connection.prepareStatement(sql);
 
-            pstmt.setInt(1,userId);
+            pstmt.setInt(1, userId);
 
             ResultSet rs = pstmt.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
 
                 //int userIdFromDB = rs.getInt("user_id");
                 int productIDFromDB = rs.getInt("product_id");
                 int quantityFromDB = rs.getInt("quantity");
 
-                System.out.println(productIDFromDB);
-                System.out.println(quantityFromDB);
-
-//                Product product = productDao.getById(productIDFromDB);
-   //             ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
-//
-//                shoppingCartItem.setProduct(product);
-  //              shoppingCartItem.setQuantity(quantityFromDB);
-//
-  //               shoppingCart.add(shoppingCartItem);
+                System.out.println("Product ID: " + productIDFromDB);
+                System.out.println("Quantity: " + quantityFromDB);
+                System.out.println("Added to cart :)");
             }
 
 
-
-        }catch(SQLException sqlException){
+        } catch (SQLException sqlException) {
             System.out.println(sqlException.getLocalizedMessage());
         }
         return shoppingCart;
     }
 
     @Override
-    public ShoppingCart create(int userId, int productId) {
+    public ShoppingCart addProduct(int userId, int productId) {
+
+        return addProduct(userId, productId, 1);
+    }
+
+    @Override
+    public ShoppingCart addProduct(int userId, int productId, int quantity) {
+
+
         String sql = "INSERT INTO shopping_cart(user_id, product_id, quantity) " +
                 " VALUES (?, ?, ?);";
 
         try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 
-            statement.setInt(1,userId);
-            statement.setInt(2,productId);
+            statement.setInt(1, userId);
+            statement.setInt(2, productId);
             statement.setInt(3, 1);
 
             statement.executeUpdate();
 
-            return getByUserId(userId);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-    }
-
-        @Override
-    public ShoppingCart update(int userId, int productId) {
-        String sql = "UPDATE shopping_cart" +
-                " SET userId = ? " +
-                "   , product_Id = ? " +
-                "   , quantity = ? ";
-
-
-    return null;
+        return getByUserId(userId);
     }
 
     @Override
-    public void delete(int userId) {
-
+    public ShoppingCart getQuantity(int userId, int productId, int quantity) {
+        return null;
     }
+
+    @Override
+    public ShoppingCart updateQuantity(int userId, int productId, int quantity) {
+        String sql = "UPDATE shopping_cart" +
+                " SET quantity = ? ";
+
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            statement.setInt(1, userId);
+            statement.setInt(2, productId);
+            statement.setInt(3, 1);
+
+            statement.executeUpdate();
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return getByUserId(userId);
+    }
+
+    @Override
+    public ShoppingCart removeProduct(int userId, int productId) {
+        String sql = "DELETE FROM shopping_cart" +
+                " WHERE product_id = ? ";
+
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            statement.setInt(1, userId);
+            statement.setInt(2, productId);
+            statement.setInt(3, 1);
+
+            statement.executeUpdate();
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return getByUserId(userId);
+    }
+
+
+    @Override
+    public ShoppingCart clearCart(int userId) {
+        String sql = "DELETE FROM shopping_cart " +
+                " WHERE user_id = ?;";
+
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, userId);
+
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return getByUserId(userId);
+    }
+
+
+//    @Override
+//    public void delete(ShoppingCart shoppingCart, int userId) {
+//
+//    }
 }
