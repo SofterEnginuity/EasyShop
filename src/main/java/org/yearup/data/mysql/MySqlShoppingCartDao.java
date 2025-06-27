@@ -4,7 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yearup.data.ProductDao;
 import org.yearup.data.ShoppingCartDao;
+import org.yearup.models.Product;
 import org.yearup.models.ShoppingCart;
+import org.yearup.models.ShoppingCartItem;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,29 +28,41 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
 
     @Override
     public ShoppingCart getByUserId(int userId) {
-
         ShoppingCart shoppingCart = new ShoppingCart();
-        String sql = "SELECT * FROM shopping_cart WHERE user_id = ?";
 
-        try (Connection connection = getConnection()) {
+        String sql = "SELECT sc.product_id, sc.quantity, p.name, p.price, p.description, p.category_id, p.image_url " +
+                "FROM shopping_cart sc " +
+                "JOIN products p ON sc.product_id = p.product_id " +
+                "WHERE sc.user_id = ?";
 
-            PreparedStatement pstmt = connection.prepareStatement(sql);
+        try (Connection connection = getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
             pstmt.setInt(1, userId);
-
             ResultSet rs = pstmt.executeQuery();
+
             while (rs.next()) {
-                int productIDFromDB = rs.getInt("product_id");
-                int quantityFromDB = rs.getInt("quantity");
-                System.out.println("Product ID: " + productIDFromDB);
-                System.out.println("Quantity: " + quantityFromDB);
+                Product product = new Product();
+                product.setProductId(rs.getInt("product_id"));
+                product.setName(rs.getString("name"));
+                product.setPrice(rs.getBigDecimal("price"));
+                product.setDescription(rs.getString("description"));
+                product.setCategoryId(rs.getInt("category_id"));
+                product.setImageUrl(rs.getString("image_url"));
+                ShoppingCartItem item = new ShoppingCartItem();
+                item.setProduct(product);
+                item.setQuantity(rs.getInt("quantity"));
+
+                shoppingCart.add(item);
             }
 
         } catch (SQLException sqlException) {
-            System.out.println(sqlException.getLocalizedMessage());
+            System.out.println("Error retrieving cart: " + sqlException.getLocalizedMessage());
         }
+
         return shoppingCart;
     }
+
 
     @Override
     public ShoppingCart addProduct(int userId, int productId) {

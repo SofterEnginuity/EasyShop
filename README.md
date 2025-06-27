@@ -26,11 +26,14 @@ Follow these steps to get your application running within IntelliJ IDEA:
 
 ### Demo
 Homepage - All products
-![Application Screenshot](https://imgur.com/OIokNAP)
-Showing the signed in User and Full Shopping Cart
+![Application Screenshot](https://i.imgur.com/SA045s4.png)
+
+Cart for Signed In Users
 ![Application Screenshot](https://i.imgur.com/OfGaaQV.png)
+
 Filter by Category
 ![Application Screenshot](https://i.imgur.com/hHgosFq.png)
+
 Filter by Price (min/max)
 ![Application Screenshot](https://i.imgur.com/Nx29nw2.png)
 
@@ -58,4 +61,4 @@ Filter by Price (min/max)
 ### Special Thank You
 - to my professor Raymond for continuous support and guidance
 - to my peers for providing academic support and companionship
-- to myself 
+- to myself for being patient and graceful with myself on this journey
