@@ -37,6 +37,14 @@ Filter by Category
 Filter by Price (min/max)
 ![Application Screenshot](https://i.imgur.com/Nx29nw2.png)
 
+Cart Quantity Bug
+![Application Screenshot](https://i.imgur.com/kRi9TXE.png)
+
+Reflect Quantities Accurately
+![Application Screenshot](https://i.imgur.com/P59PHjS.png)
+
+Clear Cart
+![Application Screenshot](https://i.imgur.com/wW0ynYt.png)
 
 
 ### Future Work
@@ -47,10 +55,10 @@ Filter by Price (min/max)
 
 
 ## Challenges:
-
-- -1 to handle an empty result : prevented me from getting the results I wanted
+- -1 in mySql query to handle an empty result : prevented me from getting the results I wanted 
 - trying to meet the same goals as my peers :  phases 3-5
 - tokens and authorization - new concept, was able to implement anyways :)
+- cart item total ( had to dig in to the front end)
 
 ### Resources
 
