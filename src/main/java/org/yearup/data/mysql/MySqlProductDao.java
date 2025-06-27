@@ -10,11 +10,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-//Bugs found:
-//minprice- works, but the code is for maxprice
-//maxPrice doesnt work at all, not included in resultset
-
-
 
 @Component
 public class MySqlProductDao extends MySqlDaoBase implements ProductDao

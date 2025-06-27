@@ -83,9 +83,6 @@ public class ShoppingCartController {
         }
     }
 
-    // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated
-//updtae quantiity, take in shopping and the principal
-//call add to update them
 
     @DeleteMapping
     public ShoppingCart deleteAllItems(Principal principal)

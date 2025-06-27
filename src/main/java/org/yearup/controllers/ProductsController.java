@@ -24,13 +24,6 @@ public class ProductsController
         this.productDao = productDao;
     }
 
-
-//    @GetMapping
-//    @PreAuthorize("permitAll()")
-//    public List<Product> getAllProducts(){
-//        return productDao.getAllProducts();
-//    }
-
     @GetMapping("")
     @PreAuthorize("permitAll()")
     public List<Product> search(@RequestParam(name="cat", required = false) Integer categoryId,
@@ -76,7 +69,6 @@ public class ProductsController
 
     @PostMapping()
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    @ResponseStatus(HttpStatus.CREATED)
     public Product addProduct(@RequestBody Product product)
     {
         try

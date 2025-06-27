@@ -28,9 +28,6 @@ Follow these steps to get your application running within IntelliJ IDEA:
 Homepage - All products
 ![Application Screenshot](https://i.imgur.com/SA045s4.png)
 
-Cart for Signed In Users
-![Application Screenshot](https://i.imgur.com/OfGaaQV.png)
-
 Filter by Category
 ![Application Screenshot](https://i.imgur.com/hHgosFq.png)
 

@@ -162,9 +162,4 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
         return getByUserId(userId);
     }
 
-
-//    @Override
-//    public void delete(ShoppingCart shoppingCart, int userId) {
-//
-//    }
 }
