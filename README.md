@@ -32,7 +32,7 @@ Filter by Category
 ![Application Screenshot](https://i.imgur.com/hHgosFq.png)
 
 Filter by Price (min/max)
-![Application Screenshot](https://i.imgur.com/Nx29nw2.png)
+![Application Screenshot](https://i.imgur.com/ABiZGrB.png)
 
 Cart Quantity Bug
 ![Application Screenshot](https://i.imgur.com/kRi9TXE.png)
