@@ -66,11 +66,29 @@ public class ShoppingCartController {
         }
     }
 
-    // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated
 
+    @PutMapping("/products/{productId}")
+    public ShoppingCart UpdateQuantity(@PathVariable int productId, @RequestBody ShoppingCartItem item, Principal principal) {
+        try {
+
+            String userName = principal.getName();
+            System.out.println(userName);
+            User user = userDao.getByUserName(userName);
+            int userId = user.getId();
+            return shoppingCartDao.addProduct(userId,productId,item.getQuantity());
+
+
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        }
+    }
+
+    // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated
+//updtae quantiity, take in shopping and the principal
+//call add to update them
 
     @DeleteMapping
-    public void deleteAllItems(Principal principal)
+    public ShoppingCart deleteAllItems(Principal principal)
     {
         try
         {
@@ -78,7 +96,7 @@ public class ShoppingCartController {
             User user = userDao.getByUserName(userName);
             int userId = user.getId();
 
-            shoppingCartDao.clearCart(userId);
+            return shoppingCartDao.clearCart(userId);
 
         }
         catch(Exception ex)

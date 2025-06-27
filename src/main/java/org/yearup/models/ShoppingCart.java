@@ -45,5 +45,11 @@ public class ShoppingCart
 
         return total;
     }
+    public int getTotalQuantity() {
+        return items.values()
+                .stream()
+                .mapToInt(ShoppingCartItem::getQuantity)
+                .sum();
+    }
 
 }
