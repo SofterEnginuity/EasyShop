@@ -4,12 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yearup.data.ProductDao;
 import org.yearup.data.ShoppingCartDao;
-import org.yearup.data.UserDao;
-import org.yearup.models.Product;
 import org.yearup.models.ShoppingCart;
-import org.yearup.models.ShoppingCartItem;
-import org.yearup.models.User;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,14 +15,9 @@ import java.sql.SQLException;
 @Component
 public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDao {
 
-    //private ShoppingCart shoppingCart;
-    //   private ShoppingCartItem shoppingCartItem;
     private ProductDao productDao;
-
-    //  private Product product;
-    // private User user;
     @Autowired
-//private MySqlProductDao mySqlProductDao;
+
     public MySqlShoppingCartDao(DataSource dataSource) {
         super(dataSource);
     }
@@ -37,10 +27,7 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
     public ShoppingCart getByUserId(int userId) {
 
         ShoppingCart shoppingCart = new ShoppingCart();
-
-
         String sql = "SELECT * FROM shopping_cart WHERE user_id = ?";
-
 
         try (Connection connection = getConnection()) {
 
@@ -49,18 +36,12 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
             pstmt.setInt(1, userId);
 
             ResultSet rs = pstmt.executeQuery();
-
             while (rs.next()) {
-
-                //int userIdFromDB = rs.getInt("user_id");
                 int productIDFromDB = rs.getInt("product_id");
                 int quantityFromDB = rs.getInt("quantity");
-
                 System.out.println("Product ID: " + productIDFromDB);
                 System.out.println("Quantity: " + quantityFromDB);
-                System.out.println("Added to cart :)");
             }
-
 
         } catch (SQLException sqlException) {
             System.out.println(sqlException.getLocalizedMessage());
@@ -87,9 +68,8 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
             statement.setInt(1, userId);
             statement.setInt(2, productId);
             statement.setInt(3, 1);
-
             statement.executeUpdate();
-
+            System.out.println("Added to cart :)");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -113,7 +93,6 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
             statement.setInt(1, userId);
             statement.setInt(2, productId);
             statement.setInt(3, 1);
-
             statement.executeUpdate();
 
 
@@ -134,9 +113,7 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
             statement.setInt(1, userId);
             statement.setInt(2, productId);
             statement.setInt(3, 1);
-
             statement.executeUpdate();
-
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -153,7 +130,6 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
         try (Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, userId);
-
             statement.executeUpdate();
 
         } catch (SQLException e) {
