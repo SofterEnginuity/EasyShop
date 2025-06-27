@@ -21,7 +21,8 @@ Follow these steps to get your application running within IntelliJ IDEA:
 - As an admin, I would like the privilege to add, remove nad update products or categories to ensure inventory accuracy
 - As a user, I would like the option to browse without logging in, but be able to login and have a custom cart as well as access to previous orders and other things
 - As a user, I would like to have the option to filter products by category and add items to cart when needed
-
+- As an admin, I would like the privilege to add, remove and update products or categories to ensure inventory accuracy
+- As a user, I would like to see all of the items in my cart as well as the quantity and total price for the cart so that I can easiily determine if I want everything, or if I would need to make modifications.
 
 ### Demo
 Homepage - All products
